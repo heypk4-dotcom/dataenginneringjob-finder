@@ -16,3 +16,8 @@ class BaseScraper(abc.ABC):
 
     def clean_title(self, title: str) -> str:
         return title.strip() if title else ""
+
+    def generate_job_id(self, source_prefix: str, company: str, title: str) -> str:
+        import hashlib
+        unique_string = f"{source_prefix}_{company}_{title}".lower().strip()
+        return f"{source_prefix}_{hashlib.md5(unique_string.encode()).hexdigest()[:10]}"

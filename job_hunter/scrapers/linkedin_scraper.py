@@ -70,7 +70,7 @@ class LinkedInScraper(BaseScraper):
                         print(f"Failed to fetch description for {apply_link}: {desc_e}")
                     
                     jobs.append({
-                        "job_id": f"li_{uuid.uuid4().hex[:8]}",
+                        "job_id": self.generate_job_id("li", company_text, title_text),
                         "company": self.clean_title(company_text),
                         "title": self.clean_title(title_text),
                         "location": location_text,

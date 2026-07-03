@@ -57,7 +57,7 @@ class GlassdoorScraper(BaseScraper):
                     full_link = f"https://www.glassdoor.co.in{href}" if href and href.startswith("/") else href
                     
                     jobs.append({
-                        "job_id": f"gd_{uuid.uuid4().hex[:8]}",
+                        "job_id": self.generate_job_id("gd", company_text, title_text),
                         "company": self.clean_title(company_text),
                         "title": self.clean_title(title_text),
                         "location": location_text,

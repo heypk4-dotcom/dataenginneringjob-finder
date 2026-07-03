@@ -48,7 +48,7 @@ class IndeedScraper(BaseScraper):
                     location_text = location_elem.inner_text() if location_elem else "Remote"
                     href = link_elem.get_attribute("href")
                     
-                    full_link = "https://in.indeed.com" + href if href.startswith("/") else href
+                    full_link = "https://in.indeed.com" + href if href and href.startswith("/") else (href or "")
                     
                     full_desc_text = f"{title_text} at {company_text}"
                     try:
@@ -62,7 +62,7 @@ class IndeedScraper(BaseScraper):
                         print(f"Failed to fetch Indeed job description for {full_link}: {e}")
                     
                     jobs.append({
-                        "job_id": f"ind_{uuid.uuid4().hex[:8]}",
+                        "job_id": self.generate_job_id("ind", company_text, title_text),
                         "company": self.clean_title(company_text),
                         "title": self.clean_title(title_text),
                         "location": location_text,

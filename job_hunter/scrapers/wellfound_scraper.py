@@ -52,10 +52,10 @@ class WellfoundScraper(BaseScraper):
                     # Try to find a link
                     link_elem = card.query_selector("a")
                     href = link_elem.get_attribute("href") if link_elem else ""
-                    full_link = f"https://wellfound.com{href}" if href.startswith("/") else href
+                    full_link = f"https://wellfound.com{href}" if href and href.startswith("/") else href
                     
                     jobs.append({
-                        "job_id": f"wf_{uuid.uuid4().hex[:8]}",
+                        "job_id": self.generate_job_id("wf", company_text, title_text),
                         "company": self.clean_title(company_text),
                         "title": self.clean_title(title_text),
                         "location": location_text,

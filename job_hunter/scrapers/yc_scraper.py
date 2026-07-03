@@ -64,7 +64,7 @@ class YCPlaywrightScraper(BaseScraper):
                     lower_title = title_text.lower()
                     if "data" in lower_title or "engineer" in lower_title:
                         jobs.append({
-                            "job_id": f"yc_{uuid.uuid4().hex[:8]}",
+                            "job_id": self.generate_job_id("yc", "YC Startup", title_text),
                             "company": "YC Startup", # HN jobs often have company in title
                             "title": self.clean_title(title_text),
                             "location": "Remote/US", # Need LLM to extract this from text
