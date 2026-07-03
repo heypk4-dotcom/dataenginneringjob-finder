@@ -1,8 +1,7 @@
 .env
 __pycache__/
 *.pyc
-data/*.csv
-data/*.json
-data/*.db
+logs/
+.pytest_cache/
 logs/
 .pytest_cache/
