@@ -1,17 +1,24 @@
 import json
 from typing import Dict, List
 import google.generativeai as genai
+from openai import OpenAI
 from ..config.settings import settings
 
 class LLMProcessor:
     def __init__(self):
         self.api_keys = settings.get_gemini_api_keys_list
         self.current_key_idx = 0
-        if self.api_keys:
+        self.gemini_model = None
+        self.openai_client = None
+        
+        if settings.openrouter_api_key:
+            self.openai_client = OpenAI(
+                base_url="https://openrouter.ai/api/v1",
+                api_key=settings.openrouter_api_key,
+            )
+        elif self.api_keys:
             genai.configure(api_key=self.api_keys[0])
-            self.model = genai.GenerativeModel('gemini-2.5-flash')
-        else:
-            self.model = None
+            self.gemini_model = genai.GenerativeModel('gemini-2.5-flash')
         
         self.dummy_resume = """
         I am a fresh Data Engineering graduate. I have strong skills in Python, SQL, and Pandas.
@@ -24,17 +31,19 @@ class LLMProcessor:
         Takes a list of jobs, calls OpenAI for each to get a summary and score,
         and returns the enriched job list.
         """
-        if not self.model:
-            print("No Gemini API Key found. Skipping LLM processing.")
+        if not self.gemini_model and not self.openai_client:
+            print("No Gemini or OpenRouter API Key found. Skipping LLM processing.")
             return jobs
             
         enriched_jobs = []
         for job in jobs:
-            if self.api_keys:
+            if not self.openai_client and self.api_keys:
                 self.current_key_idx = (self.current_key_idx + 1) % len(self.api_keys)
                 genai.configure(api_key=self.api_keys[self.current_key_idx])
                 
             try:
+                import time
+                time.sleep(2) # Prevent spamming the API and stay well within rate limits
                 result = self._analyze_job(job)
                 job.update(result)
             except Exception as e:
@@ -58,15 +67,27 @@ class LLMProcessor:
         
         user_prompt = f"Candidate Resume:\n{self.dummy_resume}\n\nJob Info:\nTitle: {job.get('title')}\nDescription: {job.get('full_job_description')}\n\nProvide the output in JSON format."
         
-        response = self.model.generate_content(
-            system_prompt + "\n\n" + user_prompt,
-            generation_config=genai.types.GenerationConfig(
+        if self.openai_client:
+            response = self.openai_client.chat.completions.create(
+                model="google/gemini-2.5-flash",
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ],
                 temperature=0.3,
-                response_mime_type="application/json",
-            ),
-        )
-        
-        content = response.text
+                response_format={"type": "json_object"}
+            )
+            content = response.choices[0].message.content
+        else:
+            response = self.gemini_model.generate_content(
+                system_prompt + "\n\n" + user_prompt,
+                generation_config=genai.types.GenerationConfig(
+                    temperature=0.3,
+                    response_mime_type="application/json",
+                ),
+            )
+            
+        content = response.text if not self.openai_client else content
         data = json.loads(content)
         if isinstance(data.get('summary'), list):
             data['summary'] = '\n'.join(f"- {item}" for item in data['summary'])

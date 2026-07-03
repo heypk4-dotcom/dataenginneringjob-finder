@@ -30,6 +30,7 @@ jobs:
           EMAIL: ${{ secrets.EMAIL }}
           APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
           GEMINI_API_KEYS: ${{ secrets.GEMINI_API_KEYS }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
           python job_hunter/scheduler/main_job.py
           

@@ -6,6 +6,7 @@ class Settings(BaseSettings):
     email: str = Field(..., env='EMAIL')
     app_password: str = Field(..., env='APP_PASSWORD')
     gemini_api_keys: str = Field(default="", env='GEMINI_API_KEYS')
+    openrouter_api_key: str = Field(default="", env='OPENROUTER_API_KEY')
     
     @property
     def get_gemini_api_keys_list(self) -> list[str]:

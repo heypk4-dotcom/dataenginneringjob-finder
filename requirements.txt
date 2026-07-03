@@ -9,6 +9,7 @@ numpy
 
 # AI & LLM
 google-generativeai
+openai
 
 # Database
 sqlalchemy
