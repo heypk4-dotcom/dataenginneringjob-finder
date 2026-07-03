@@ -36,6 +36,17 @@ class YCPlaywrightScraper(BaseScraper):
                     if link and not link.startswith("http"):
                         link = "https://news.ycombinator.com/" + link
                         
+                    # Fetch full job description by visiting the link
+                    full_desc_text = title_text
+                    try:
+                        job_page = browser.new_page()
+                        job_page.goto(link, timeout=15000)
+                        # Extract all visible text from the page
+                        full_desc_text = job_page.evaluate("document.body.innerText")
+                        job_page.close()
+                    except Exception as e:
+                        print(f"Failed to fetch YC job description for {link}: {e}")
+                        
                     # Basic heuristic for Data Engineering
                     lower_title = title_text.lower()
                     if "data" in lower_title or "engineer" in lower_title:
@@ -51,7 +62,7 @@ class YCPlaywrightScraper(BaseScraper):
                             "skills": None,
                             "posting_date": now,
                             "apply_link": link,
-                            "full_job_description": title_text,
+                            "full_job_description": full_desc_text.strip()[:5000], # Pass up to 5k chars to LLM
                             "source": "YC HackerNews",
                             "timestamp": now
                         })
