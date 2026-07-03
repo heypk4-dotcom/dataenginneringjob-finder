@@ -55,6 +55,19 @@ class LinkedInScraper(BaseScraper):
                     location_text = location_elem.text.strip() if location_elem else "Unknown Location"
                     apply_link = link_elem.get('href', '').split('?')[0] # keep base link without tracking
                     
+                    # Fetch full job description
+                    full_desc_text = f"{title_text} at {company_text} in {location_text}"
+                    try:
+                        time.sleep(1) # Be polite when hitting individual job pages
+                        job_res = requests.get(apply_link, headers=self.headers, timeout=10)
+                        if job_res.status_code == 200:
+                            job_soup = BeautifulSoup(job_res.text, 'html.parser')
+                            desc_elem = job_soup.find('div', class_='show-more-less-html__markup')
+                            if desc_elem:
+                                full_desc_text = desc_elem.text.strip()
+                    except Exception as desc_e:
+                        print(f"Failed to fetch description for {apply_link}: {desc_e}")
+                    
                     jobs.append({
                         "job_id": f"li_{uuid.uuid4().hex[:8]}",
                         "company": self.clean_title(company_text),
@@ -67,7 +80,7 @@ class LinkedInScraper(BaseScraper):
                         "skills": None,
                         "posting_date": now,
                         "apply_link": apply_link,
-                        "full_job_description": f"{title_text} at {company_text} in {location_text}",
+                        "full_job_description": full_desc_text,
                         "source": "LinkedIn",
                         "timestamp": now
                     })
