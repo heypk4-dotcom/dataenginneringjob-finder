@@ -1,5 +1,6 @@
 import sys
 import os
+import datetime
 
 # Add parent dir to path so we can run directly
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
@@ -89,9 +90,18 @@ def run_job_hunter():
     print(f"Added {new_jobs_added} new unique jobs to the database.")
     
     if new_jobs_added > 0:
-        print("Sending email report...")
-        email_sender = EmailSender()
-        email_sender.send_report(processed_jobs) # Sending the jobs that were processed in this run
+        print("Checking if it's time to send the daily report...")
+        now_utc = datetime.datetime.utcnow()
+        # 13:00 to 13:59 UTC corresponds to 18:30 to 19:29 IST. 
+        # With cron '30 * * * *', this run is at 13:30 UTC (Exactly 7:00 PM IST)
+        if now_utc.hour == 13:
+            print("It's 7 PM IST! Sending daily batch report to all recipients...")
+            todays_jobs = db_manager.get_todays_jobs()
+            if todays_jobs:
+                email_sender = EmailSender()
+                email_sender.send_report(todays_jobs)
+        else:
+            print(f"Skipping daily report for now. It will be sent at 7 PM IST. (Current UTC hour: {now_utc.hour})")
     else:
         print("No new jobs to email.")
 

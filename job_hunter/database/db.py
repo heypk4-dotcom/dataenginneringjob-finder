@@ -69,4 +69,20 @@ class DatabaseManager:
         finally:
             db.close()
 
+    def get_todays_jobs(self) -> list[dict]:
+        """Fetch all jobs scraped today for the daily summary report."""
+        db = SessionLocal()
+        try:
+            today = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+            jobs = db.query(Job).filter(Job.timestamp >= today).all()
+            
+            jobs_list = []
+            for j in jobs:
+                j_dict = j.__dict__.copy()
+                j_dict.pop('_sa_instance_state', None)
+                jobs_list.append(j_dict)
+            return jobs_list
+        finally:
+            db.close()
+
 db_manager = DatabaseManager()
