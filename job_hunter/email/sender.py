@@ -77,9 +77,16 @@ class EmailSender:
             print("No jobs to email.")
             return
             
+        recipients = [
+            self.email,
+            "atharvbhosale03@gmail.com",
+            "kannaujiyapriyanshu111@gmail.com",
+            "aaditya.2007singh@gmail.com"
+        ]
+        
         msg = MIMEMultipart()
         msg['From'] = self.email
-        msg['To'] = self.email
+        msg['To'] = ", ".join(recipients)
         msg['Subject'] = f"Daily Data Engineering Jobs Report - {len(jobs)} New Jobs"
         
         html_content = self.generate_html_report(jobs)
