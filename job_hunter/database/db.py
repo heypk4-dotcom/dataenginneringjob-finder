@@ -85,4 +85,17 @@ class DatabaseManager:
         finally:
             db.close()
 
+    def filter_new_jobs(self, jobs_data: list[dict]) -> list[dict]:
+        """Filters a list of jobs, returning only those not yet in the database."""
+        db = SessionLocal()
+        new_jobs = []
+        try:
+            for job in jobs_data:
+                existing_job = db.query(Job).filter(Job.job_id == job['job_id']).first()
+                if not existing_job:
+                    new_jobs.append(job)
+            return new_jobs
+        finally:
+            db.close()
+
 db_manager = DatabaseManager()

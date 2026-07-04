@@ -75,9 +75,16 @@ def run_job_hunter():
     print("Cleaning jobs...")
     cleaned_jobs = DataCleaner.clean_jobs(raw_jobs)
     
-    print("Processing with LLM...")
+    print("Filtering out jobs already in the database...")
+    new_jobs_to_process = db_manager.filter_new_jobs(cleaned_jobs)
+    
+    if not new_jobs_to_process:
+        print("No brand new jobs found this hour. Exiting.")
+        return
+        
+    print(f"Processing {len(new_jobs_to_process)} new jobs with LLM...")
     llm = LLMProcessor()
-    processed_jobs = llm.process_jobs(cleaned_jobs)
+    processed_jobs = llm.process_jobs(new_jobs_to_process)
     
     email_sender = EmailSender()
     for job in processed_jobs:
