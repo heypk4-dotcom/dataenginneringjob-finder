@@ -82,7 +82,8 @@ class EmailSender:
             "atharvbhosale03@gmail.com",
             "kannaujiyapriyanshu111@gmail.com",
             "aaditya.2007singh@gmail.com",
-            "bhosaleatharv16@gmail.com"
+            "bhosaleatharv16@gmail.com",
+            "bhosaleatharv03@gmail.com"
         ]
         
         msg = MIMEMultipart()
