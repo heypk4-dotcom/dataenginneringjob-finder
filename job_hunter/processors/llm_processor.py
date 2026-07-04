@@ -7,13 +7,14 @@ from ..utils.logger import setup_logger
 
 logger = setup_logger(__name__)
 
+
 class LLMProcessor:
     def __init__(self):
         self.api_keys = settings.get_gemini_api_keys_list
         self.current_key_idx = 0
         self.gemini_model = None
         self.openai_client = None
-        
+
         if settings.openrouter_api_key:
             self.openai_client = OpenAI(
                 base_url="https://openrouter.ai/api/v1",
@@ -21,8 +22,8 @@ class LLMProcessor:
             )
         elif self.api_keys:
             genai.configure(api_key=self.api_keys[0])
-            self.gemini_model = genai.GenerativeModel('gemini-2.5-flash')
-        
+            self.gemini_model = genai.GenerativeModel("gemini-2.5-flash")
+
         self.dummy_resume = """
         You are an expert technical recruiter and Data Engineering hiring manager.
 
@@ -145,33 +146,38 @@ class LLMProcessor:
         8. Suggest interview questions based on the job.
         9. Recommend projects to bridge any skill gaps.
         """
-        
+
     def process_jobs(self, jobs: List[Dict]) -> List[Dict]:
         """
         Takes a list of jobs, calls OpenAI for each to get a summary and score,
         and returns the enriched job list.
         """
         if not self.gemini_model and not self.openai_client:
-            logger.warning("No Gemini or OpenRouter API Key found. Skipping LLM processing.")
+            logger.warning(
+                "No Gemini or OpenRouter API Key found. Skipping LLM processing."
+            )
             return jobs
-            
+
         enriched_jobs = []
         for job in jobs:
             if not self.openai_client and self.api_keys:
                 self.current_key_idx = (self.current_key_idx + 1) % len(self.api_keys)
                 genai.configure(api_key=self.api_keys[self.current_key_idx])
-                
+
             try:
                 import time
-                time.sleep(2) # Prevent spamming the API and stay well within rate limits
+
+                time.sleep(
+                    2
+                )  # Prevent spamming the API and stay well within rate limits
                 result = self._analyze_job(job)
                 job.update(result)
             except Exception as e:
                 logger.error(f"Error processing job {job.get('job_id')}: {e}")
             enriched_jobs.append(job)
-            
+
         return enriched_jobs
-        
+
     def _analyze_job(self, job: Dict) -> Dict:
         system_prompt = (
             "You are an AI assistant helping a data engineer find a job. "
@@ -190,18 +196,18 @@ class LLMProcessor:
             "- interview_questions: A list of strings with suggested interview questions.\n"
             "- recommended_projects: A list of strings recommending projects to bridge gaps."
         )
-        
+
         user_prompt = f"Candidate Resume:\n{self.dummy_resume}\n\nJob Info:\nTitle: {job.get('title')}\nDescription: {job.get('full_job_description')}\n\nProvide the output in JSON format."
-        
+
         if self.openai_client:
             response = self.openai_client.chat.completions.create(
                 model="google/gemini-2.5-flash",
                 messages=[
                     {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_prompt}
+                    {"role": "user", "content": user_prompt},
                 ],
                 temperature=0.3,
-                response_format={"type": "json_object"}
+                response_format={"type": "json_object"},
             )
             content = response.choices[0].message.content
         else:
@@ -212,9 +218,9 @@ class LLMProcessor:
                     response_mime_type="application/json",
                 ),
             )
-            
+
         content = response.text if not self.openai_client else content
-        
+
         # Robust JSON parsing
         try:
             # Sometime LLMs wrap json in markdown blocks like ```json ... ```
@@ -222,10 +228,12 @@ class LLMProcessor:
                 content = content.split("```json")[1].split("```")[0].strip()
             elif "```" in content:
                 content = content.split("```")[1].split("```")[0].strip()
-                
+
             data = json.loads(content)
         except json.JSONDecodeError as e:
-            logger.error(f"Failed to parse JSON from LLM: {e}. Raw content: {content[:200]}...")
+            logger.error(
+                f"Failed to parse JSON from LLM: {e}. Raw content: {content[:200]}..."
+            )
             data = {
                 "summary": "Failed to extract summary.",
                 "resume_match_score": 0,
@@ -235,10 +243,15 @@ class LLMProcessor:
                 "resume_summary": "",
                 "cover_letter": "",
                 "interview_questions": [],
-                "recommended_projects": []
+                "recommended_projects": [],
             }
-            
-        for field in ['summary', 'missing_skills', 'interview_questions', 'recommended_projects']:
+
+        for field in [
+            "summary",
+            "missing_skills",
+            "interview_questions",
+            "recommended_projects",
+        ]:
             if isinstance(data.get(field), list):
-                data[field] = '\n'.join(f"- {item}" for item in data[field])
+                data[field] = "\n".join(f"- {item}" for item in data[field])
         return data

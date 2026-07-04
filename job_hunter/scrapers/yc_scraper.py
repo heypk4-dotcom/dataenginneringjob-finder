@@ -1,41 +1,43 @@
 from typing import List, Dict
 from datetime import datetime
-import uuid
 from .base import BaseScraper
 from ..config.settings import settings
+
 
 class YCPlaywrightScraper(BaseScraper):
     """
     A basic Playwright scraper for YCombinator jobs or similar platforms.
     """
+
     def __init__(self):
         super().__init__()
         # In a real scenario, you'd import sync_playwright and run it
         # from playwright.sync_api import sync_playwright
-    
+
     def fetch_jobs(self) -> List[Dict]:
         jobs = []
         now = datetime.utcnow()
         try:
             from playwright.sync_api import sync_playwright
+
             with sync_playwright() as p:
                 browser = p.chromium.launch(headless=True)
                 page = browser.new_page()
                 page.goto("https://news.ycombinator.com/jobs", timeout=30000)
-                
+
                 # HackerNews jobs is very simple HTML
                 rows = page.query_selector_all("tr.athing")
-                
-                for row in rows[:settings.max_jobs_per_source]:
+
+                for row in rows[: settings.max_jobs_per_source]:
                     title_elem = row.query_selector(".titleline a")
                     if not title_elem:
                         continue
-                        
+
                     title_text = title_elem.inner_text()
                     link = title_elem.get_attribute("href")
                     if link and not link.startswith("http"):
                         link = "https://news.ycombinator.com/" + link
-                        
+
                     # Check post age to ensure it's recent (past 24 hours)
                     try:
                         next_row = row.evaluate_handle("el => el.nextElementSibling")
@@ -44,11 +46,13 @@ class YCPlaywrightScraper(BaseScraper):
                             if age_elem:
                                 age_text = age_elem.inner_text().lower()
                                 # if it says '2 days ago' or '3 days ago', skip it
-                                if "day" in age_text and not age_text.startswith("1 day"):
+                                if "day" in age_text and not age_text.startswith(
+                                    "1 day"
+                                ):
                                     continue
                     except Exception:
-                        pass # Ignore parsing errors on age and continue safely
-                        
+                        pass  # Ignore parsing errors on age and continue safely
+
                     # Fetch full job description by visiting the link
                     full_desc_text = title_text
                     try:
@@ -59,28 +63,34 @@ class YCPlaywrightScraper(BaseScraper):
                         job_page.close()
                     except Exception as e:
                         print(f"Failed to fetch YC job description for {link}: {e}")
-                        
+
                     # Basic heuristic for Data Engineering
                     lower_title = title_text.lower()
                     if "data" in lower_title or "engineer" in lower_title:
-                        jobs.append({
-                            "job_id": self.generate_job_id("yc", "YC Startup", title_text),
-                            "company": "YC Startup", # HN jobs often have company in title
-                            "title": self.clean_title(title_text),
-                            "location": "Remote/US", # Need LLM to extract this from text
-                            "remote": "remote" in lower_title,
-                            "internship": "intern" in lower_title,
-                            "experience_required": "Unknown",
-                            "salary": None,
-                            "skills": None,
-                            "posting_date": now,
-                            "apply_link": link,
-                            "full_job_description": full_desc_text.strip()[:5000], # Pass up to 5k chars to LLM
-                            "source": "YC HackerNews",
-                            "timestamp": now
-                        })
+                        jobs.append(
+                            {
+                                "job_id": self.generate_job_id(
+                                    "yc", "YC Startup", title_text
+                                ),
+                                "company": "YC Startup",  # HN jobs often have company in title
+                                "title": self.clean_title(title_text),
+                                "location": "Remote/US",  # Need LLM to extract this from text
+                                "remote": "remote" in lower_title,
+                                "internship": "intern" in lower_title,
+                                "experience_required": "Unknown",
+                                "salary": None,
+                                "skills": None,
+                                "posting_date": now,
+                                "apply_link": link,
+                                "full_job_description": full_desc_text.strip()[
+                                    :5000
+                                ],  # Pass up to 5k chars to LLM
+                                "source": "YC HackerNews",
+                                "timestamp": now,
+                            }
+                        )
                 browser.close()
         except Exception as e:
             print(f"Playwright scraper error: {e}")
-            
+
         return jobs
