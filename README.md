@@ -1,6 +1,7 @@
 <div align="center">
-  <h1>🚀 Automated Remote Job Finder & LLM Resume Matcher</h1>
-  <p><strong>The Ultimate Data Engineering & Software Developer Job Scraper Powered by Python, Playwright, and LLMs (OpenAI / Gemini)</strong></p>
+  <h1>🚀 Automated Data Engineering Job Finder & LLM Resume Matcher</h1>
+  <p><strong>The Ultimate Data Engineering Job Scraper Powered by Python, Playwright, and LLMs (OpenAI / Gemini)</strong></p>
+  <p><h3><a href="https://priyanshukannaujiya.github.io/remotejobfinder/">🌐 Visit the Live Website</a></h3></p>
 </div>
 
 <p align="center">
@@ -13,9 +14,9 @@
 
 ---
 
-## 🌟 What is Remote Job Finder?
+## 🌟 What is Data Engineering Job Finder?
 
-**Remote Job Finder** is an advanced, fully automated pipeline designed for job seekers who want to stop manually scrolling through job boards. Built heavily for **Data Engineering** and **Software Engineering** roles, this system acts as your personal AI Recruiter.
+**Data Engineering Job Finder** is an advanced, fully automated pipeline designed for job seekers who want to stop manually scrolling through job boards. Built exclusively for **Data Engineering**, **Analytics Engineering**, and **Big Data** roles, this system acts as your personal AI Recruiter.
 
 ### 🔥 Key Features for SEO & Scalability
 - **Automated Job Scraper:** Headless scraping using **Playwright** and **BeautifulSoup** to extract jobs from modern React/Angular websites without getting blocked.
@@ -58,7 +59,7 @@ Whether you are using a standard IDE like **VS Code** or a highly advanced AI co
 ### 2️⃣ Setting up with Antigravity IDE
 If you are using the **Antigravity IDE** (AI-powered development), the setup is nearly instantaneous:
 1. Open the repository folder in Antigravity.
-2. Ask the agent: *"Set up the Remote Job Finder environment."*
+2. Ask the agent: *"Set up the Data Engineering Job Finder environment."*
 3. Antigravity will automatically detect `requirements.txt`, create the isolated environment, and install Playwright.
 4. Provide your `.env` secrets when prompted, and the AI will configure the rest!
 
