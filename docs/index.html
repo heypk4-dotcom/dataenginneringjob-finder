@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    
+    <!-- SEO Primary Meta Tags -->
+    <title>Remote Job Finder | Automated Data Engineering & Software Dev Job Scraper</title>
+    <meta name="title" content="Remote Job Finder | Automated Data Engineering & Software Dev Job Scraper">
+    <meta name="description" content="An advanced automated job search pipeline that scrapes modern remote jobs, evaluates resumes using LLMs (OpenAI, Gemini), and sends customized email alerts.">
+    <meta name="keywords" content="remote job finder, data engineering jobs, software developer jobs, job scraper, playwright, python scraper, llm resume matcher, automated job search">
+    <meta name="author" content="Priyanshu Kannaujiya">
+    <link rel="canonical" href="https://priyanshukannaujiya.github.io/remotejobfinder/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://priyanshukannaujiya.github.io/remotejobfinder/">
+    <meta property="og:title" content="Remote Job Finder | AI Powered Job Scraper">
+    <meta property="og:description" content="Automate your job hunt. High-end scraping with Playwright, matched perfectly to your resume using LLMs. Stop searching and let jobs come to you.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://priyanshukannaujiya.github.io/remotejobfinder/">
+    <meta property="twitter:title" content="Remote Job Finder | AI Powered Job Scraper">
+    <meta property="twitter:description" content="Automate your job hunt. High-end scraping with Playwright, matched perfectly to your resume using LLMs.">
+    <meta property="twitter:image" content="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80">
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Remote Job Finder",
+      "operatingSystem": "Windows, Linux, macOS",
+      "applicationCategory": "BusinessApplication",
+      "about": "Automated pipeline that scrapes jobs and matches resumes using LLMs.",
+      "author": {
+        "@type": "Person",
+        "name": "Priyanshu Kannaujiya"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="background-effects">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <header class="navbar">
+        <div class="container nav-container">
+            <div class="logo">🚀 Remote<span>JobFinder</span></div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#how-it-works">How It Works</a></li>
+                    <li><a href="#tech-stack">Tech Stack</a></li>
+                </ul>
+            </nav>
+            <a href="https://github.com/priyanshukannaujiya/remotejobfinder" target="_blank" class="btn btn-outline" rel="noopener noreferrer">View on GitHub</a>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero" id="home">
+            <div class="container hero-content">
+                <div class="hero-text animate-on-scroll fade-up">
+                    <h1 class="hero-title">Automate Your Job Hunt with <span class="text-gradient">AI Precision</span></h1>
+                    <p class="hero-subtitle">Stop scrolling through endless job boards. Our powerful Playwright scraper finds the best Data Engineering and Software Dev roles and matches them to your resume using LLMs.</p>
+                    <div class="hero-cta">
+                        <a href="https://github.com/priyanshukannaujiya/remotejobfinder" class="btn btn-primary" target="_blank" rel="noopener noreferrer">
+                            Get Started
+                        </a>
+                        <a href="#features" class="btn btn-secondary">Learn More</a>
+                    </div>
+                </div>
+                <div class="hero-visual animate-on-scroll fade-left">
+                    <div class="glass-card mockup-card">
+                        <div class="mockup-header">
+                            <span class="dot red"></span>
+                            <span class="dot yellow"></span>
+                            <span class="dot green"></span>
+                        </div>
+                        <div class="mockup-body">
+                            <div class="code-line"><span class="keyword">import</span> <span class="module">Playwright</span></div>
+                            <div class="code-line"><span class="keyword">from</span> <span class="module">LLM</span> <span class="keyword">import</span> <span class="function">evaluate_resume</span></div>
+                            <br>
+                            <div class="code-line comment"># Fetching jobs...</div>
+                            <div class="code-line"><span class="variable">jobs</span> = scraper.get_remote_roles()</div>
+                            <div class="code-line comment"># Matching against resume...</div>
+                            <div class="code-line"><span class="variable">matches</span> = evaluate_resume(jobs, my_resume)</div>
+                            <br>
+                            <div class="code-line success">> Found 15 highly compatible jobs today!</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="features section" id="features">
+            <div class="container">
+                <div class="section-header animate-on-scroll fade-up">
+                    <h2>Powerful Features</h2>
+                    <p>Designed for efficiency and scale, powered by modern tech.</p>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card glass-card animate-on-scroll zoom-in" style="--delay: 0.1s">
+                        <div class="icon-wrapper">🤖</div>
+                        <h3>LLM Resume Matcher</h3>
+                        <p>Integrates with OpenAI, Google Gemini, and OpenRouter to intelligently compare job descriptions with your specific resume, providing a 0-100 match score.</p>
+                    </div>
+                    <div class="feature-card glass-card animate-on-scroll zoom-in" style="--delay: 0.2s">
+                        <div class="icon-wrapper">🕸️</div>
+                        <h3>Headless Scraping</h3>
+                        <p>Utilizes Playwright and BeautifulSoup to bypass standard bot protections and scrape dynamically rendered React/Angular websites.</p>
+                    </div>
+                    <div class="feature-card glass-card animate-on-scroll zoom-in" style="--delay: 0.3s">
+                        <div class="icon-wrapper">📊</div>
+                        <h3>Streamlit Dashboard</h3>
+                        <p>A beautiful, responsive web UI to filter, search, and export your curated jobs to CSV or JSON with insightful visual metrics.</p>
+                    </div>
+                    <div class="feature-card glass-card animate-on-scroll zoom-in" style="--delay: 0.4s">
+                        <div class="icon-wrapper">🔔</div>
+                        <h3>Automated Alerts</h3>
+                        <p>Receive immediate email notifications via SMTP whenever a "Dream Job" (high match score, remote) is detected.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="how-it-works section" id="how-it-works">
+            <div class="container">
+                <div class="section-header animate-on-scroll fade-up">
+                    <h2>How It Works</h2>
+                    <p>Your personal AI recruiter workflow</p>
+                </div>
+                <div class="timeline">
+                    <div class="timeline-item animate-on-scroll fade-right">
+                        <div class="timeline-marker">1</div>
+                        <div class="timeline-content glass-card">
+                            <h3>Data Collection</h3>
+                            <p>The system wakes up on a schedule via GitHub Actions and scrapes dozens of job boards for specific keywords and locations.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item animate-on-scroll fade-left">
+                        <div class="timeline-marker">2</div>
+                        <div class="timeline-content glass-card">
+                            <h3>Deduplication & DB</h3>
+                            <p>Pandas cleans the data, removes duplicates, and stores everything in a local SQLite Database via SQLAlchemy.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item animate-on-scroll fade-right">
+                        <div class="timeline-marker">3</div>
+                        <div class="timeline-content glass-card">
+                            <h3>AI Evaluation</h3>
+                            <p>Google Gemini or GPT-4 assesses the job requirements against your skillset and assigns a compatibility score.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item animate-on-scroll fade-left">
+                        <div class="timeline-marker">4</div>
+                        <div class="timeline-content glass-card">
+                            <h3>Delivery</h3>
+                            <p>You receive an email summary of the best matches, and the local Streamlit dashboard is instantly updated.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="container footer-container">
+            <div class="footer-logo">🚀 Remote<span>JobFinder</span></div>
+            <p class="copyright">&copy; 2026 Priyanshu Kannaujiya. Built for the modern job seeker.</p>
+            <div class="social-links">
+                <a href="https://github.com/priyanshukannaujiya/remotejobfinder" aria-label="GitHub Repository" target="_blank" rel="noopener noreferrer">
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
