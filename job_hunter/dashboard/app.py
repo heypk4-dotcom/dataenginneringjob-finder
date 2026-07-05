@@ -9,7 +9,6 @@ import plotly.express as px
 
 # Add root directory to path to import local modules
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
-from job_hunter.email.sender import EmailSender
 
 # Setup page
 st.set_page_config(page_title="Data Engineering Job Hunter", layout="wide")
@@ -297,10 +296,11 @@ with st.sidebar.form(key="subscribe_form"):
                     
                     # Send welcome email
                     try:
+                        from job_hunter.email.sender import EmailSender
                         sender = EmailSender()
                         sender.send_welcome_email(email_input)
                     except Exception as e:
-                        st.error("Could not send welcome email, but you are subscribed!")
+                        st.error("Could not send welcome email (check your environment secrets), but you are subscribed!")
                         
                     st.success("Successfully subscribed! Check your inbox for a welcome email.")
                 except Exception as e:
