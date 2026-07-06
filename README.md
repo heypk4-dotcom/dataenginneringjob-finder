@@ -1,7 +1,7 @@
 <div align="center">
   <h1>🚀 Automated Data Engineering Job Finder & AI Profile Matcher</h1>
   <p><strong>The Ultimate Data Engineering Job Scraper Powered by Python, Playwright, and LLMs (OpenAI / Gemini)</strong></p>
-  <p><h3><a href="https://priyanshukannaujiya.github.io/remotejobfinder/">🌐 Visit the Live Website</a> | <a href="https://dataenginneringjob-finder-4uexz3lf59hd5dauzymcph.streamlit.app/">📊 View Live Dashboard</a></h3></p>
+  <p><h3><a href="https://heypk4-dotcom.github.io/dataenginneringjob-finder/">🌐 Visit the Live Website</a> | <a href="https://dataenginneringjob-finder-4uexz3lf59hd5dauzymcph.streamlit.app/">📊 View Live Dashboard</a></h3></p>
 </div>
 
 <p align="center">
