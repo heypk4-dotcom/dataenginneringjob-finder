@@ -22,8 +22,16 @@ class LinkedInScraper(BaseScraper):
         # Searching for Data Engineer in India and Worldwide Remote
         # f_TPR=r86400 ensures we ONLY get jobs posted in the Past 24 Hours
         self.search_urls = [
+            # Regular Data Engineer
             f"{self.base_url}?keywords=Data%20Engineer&location=India&f_WT=2&f_TPR=r86400",  # Remote India (Past 24h)
             f"{self.base_url}?keywords=Data%20Engineer&location=India&f_E=1,2&f_TPR=r86400",  # Intern/Entry Level India (Past 24h)
+            f"{self.base_url}?keywords=Data%20Engineer&location=Mumbai&f_TPR=r86400",  # Mumbai On-ground/Hybrid (Past 24h)
+            f"{self.base_url}?keywords=Data%20Engineer&location=Pune&f_TPR=r86400",  # Pune On-ground/Hybrid (Past 24h)
+            
+            # Explicitly Data Engineer Intern
+            f"{self.base_url}?keywords=Data%20Engineer%20Intern&location=India&f_WT=2&f_TPR=r86400",  # Remote Intern India
+            f"{self.base_url}?keywords=Data%20Engineer%20Intern&location=Mumbai&f_TPR=r86400",  # Mumbai Intern
+            f"{self.base_url}?keywords=Data%20Engineer%20Intern&location=Pune&f_TPR=r86400",  # Pune Intern
         ]
 
     def fetch_jobs(self) -> List[Dict]:

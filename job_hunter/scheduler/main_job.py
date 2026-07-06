@@ -5,7 +5,7 @@ import datetime
 # Add parent dir to path so we can run directly
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
-from job_hunter.database.models import init_db
+from job_hunter.database.models import init_db, data_dir
 from job_hunter.scrapers.yc_scraper import YCPlaywrightScraper
 from job_hunter.scrapers.linkedin_scraper import LinkedInScraper
 from job_hunter.scrapers.indeed_scraper import IndeedScraper
@@ -67,65 +67,76 @@ def run_job_hunter():
         GlassdoorScraper(),
     ]
 
-    raw_jobs = []
-    for scraper in scrapers:
-        try:
-            logger.info(f"Running {scraper.__class__.__name__}...")
-            scraped = scraper.fetch_jobs()
-            raw_jobs.extend(scraped)
-            logger.info(f"Found {len(scraped)} jobs from {scraper.__class__.__name__}")
-        except Exception as e:
-            logger.error(f"Error running scraper {scraper.__class__.__name__}: {e}")
+    try:
+        raw_jobs = []
+        for scraper in scrapers:
+            try:
+                logger.info(f"Running {scraper.__class__.__name__}...")
+                scraped = scraper.fetch_jobs()
+                raw_jobs.extend(scraped)
+                logger.info(f"Found {len(scraped)} jobs from {scraper.__class__.__name__}")
+            except Exception as e:
+                logger.error(f"Error running scraper {scraper.__class__.__name__}: {e}")
 
-    if not raw_jobs:
-        logger.info("No jobs scraped today.")
-        return
+        if not raw_jobs:
+            logger.info("No jobs scraped today.")
+            return
 
-    logger.info("Cleaning jobs...")
-    cleaned_jobs = DataCleaner.clean_jobs(raw_jobs)
+        logger.info("Cleaning jobs...")
+        cleaned_jobs = DataCleaner.clean_jobs(raw_jobs)
 
-    logger.info("Filtering out jobs already in the database...")
-    new_jobs_to_process = db_manager.filter_new_jobs(cleaned_jobs)
+        logger.info("Filtering out jobs already in the database...")
+        new_jobs_to_process = db_manager.filter_new_jobs(cleaned_jobs)
 
-    if not new_jobs_to_process:
-        logger.info("No brand new jobs found this hour. Exiting.")
-        return
+        if not new_jobs_to_process:
+            logger.info("No brand new jobs found this hour. Skipping LLM processing.")
+        else:
+            logger.info(f"Processing {len(new_jobs_to_process)} new jobs with LLM...")
+            llm = LLMProcessor()
+            processed_jobs = llm.process_jobs(new_jobs_to_process)
 
-    logger.info(f"Processing {len(new_jobs_to_process)} new jobs with LLM...")
-    llm = LLMProcessor()
-    processed_jobs = llm.process_jobs(new_jobs_to_process)
+            email_sender = EmailSender()
+            for job in processed_jobs:
+                if is_dream_job(job):
+                    logger.info(
+                        f"Dream job found! {job.get('title')} at {job.get('company')}. Sending immediate alert."
+                    )
+                    email_sender.send_dream_job_alert(job)
 
-    email_sender = EmailSender()
-    for job in processed_jobs:
-        if is_dream_job(job):
-            logger.info(
-                f"Dream job found! {job.get('title')} at {job.get('company')}. Sending immediate alert."
-            )
-            email_sender.send_dream_job_alert(job)
+            logger.info("Saving to database...")
+            new_jobs_added = db_manager.save_jobs(processed_jobs)
+            logger.info(f"Added {new_jobs_added} new unique jobs to the database.")
 
-    logger.info("Saving to database...")
-    new_jobs_added = db_manager.save_jobs(processed_jobs)
-    logger.info(f"Added {new_jobs_added} new unique jobs to the database.")
-
-    if new_jobs_added > 0:
+    finally:
         logger.info("Checking if it's time to send the daily report...")
         now_utc = datetime.datetime.utcnow()
-        # 13:00 to 13:59 UTC corresponds to 18:30 to 19:29 IST.
-        # With cron '30 * * * *', this run is at 13:30 UTC (Exactly 7:00 PM IST)
-        if now_utc.hour == 13:
-            logger.info(
-                "It's 7 PM IST! Sending daily batch report to all recipients..."
-            )
+        # We want to send the report around 7 PM IST (13:30 UTC).
+        # We will send it if the current UTC hour is >= 13, AND we haven't sent it today.
+        
+        last_report_file = os.path.join(data_dir, "last_report_date.txt")
+        last_report_date = ""
+        if os.path.exists(last_report_file):
+            with open(last_report_file, "r") as f:
+                last_report_date = f.read().strip()
+                
+        current_date = now_utc.strftime("%Y-%m-%d")
+
+        if now_utc.hour >= 13 and last_report_date != current_date:
+            logger.info("It's past 6:30 PM IST and no report sent today. Sending daily batch report to all recipients...")
             todays_jobs = db_manager.get_todays_jobs()
             if todays_jobs:
                 email_sender = EmailSender()
                 email_sender.send_report(todays_jobs)
+                # Mark as sent
+                with open(last_report_file, "w") as f:
+                    f.write(current_date)
+            else:
+                logger.info("No jobs found today to send in the daily report.")
         else:
-            logger.info(
-                f"Skipping daily report for now. It will be sent at 7 PM IST. (Current UTC hour: {now_utc.hour})"
-            )
-    else:
-        logger.info("No new jobs to email.")
+            if last_report_date == current_date:
+                logger.info("Daily report already sent for today.")
+            else:
+                logger.info(f"Skipping daily report for now. It will be sent after 6:30 PM IST. (Current UTC hour: {now_utc.hour})")
 
 
 if __name__ == "__main__":

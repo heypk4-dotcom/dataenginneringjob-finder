@@ -122,15 +122,24 @@ class EmailSender:
                 part["Content-Disposition"] = 'attachment; filename="jobs.csv"'
                 msg.attach(part)
 
-        try:
-            server = smtplib.SMTP(self.smtp_server, self.smtp_port, timeout=10)
-            server.starttls()
-            server.login(self.email, self.password)
-            server.send_message(msg)
-            server.quit()
-            logger.info("Email report sent successfully!")
-        except Exception as e:
-            logger.error(f"Failed to send email: {e}")
+        import time
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                server = smtplib.SMTP(self.smtp_server, self.smtp_port, timeout=15)
+                server.starttls()
+                server.login(self.email, self.password)
+                server.send_message(msg)
+                server.quit()
+                logger.info("Email report sent successfully!")
+                break
+            except Exception as e:
+                logger.error(f"Failed to send email (attempt {attempt+1}/{max_retries}): {e}")
+                if attempt < max_retries - 1:
+                    logger.info("Retrying in 5 seconds...")
+                    time.sleep(5)
+                else:
+                    logger.error("Max retries reached. Email sending failed permanently.")
 
     def send_dream_job_alert(self, job: Dict):
         recipient = "kannaujiyapriyanshu111@gmail.com"
@@ -176,15 +185,24 @@ class EmailSender:
 
         msg.attach(MIMEText(html, "html"))
 
-        try:
-            server = smtplib.SMTP(self.smtp_server, self.smtp_port, timeout=10)
-            server.starttls()
-            server.login(self.email, self.password)
-            server.send_message(msg)
-            server.quit()
-            logger.info(f"Dream job alert sent to {recipient}!")
-        except Exception as e:
-            logger.error(f"Failed to send dream job alert: {e}")
+        import time
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                server = smtplib.SMTP(self.smtp_server, self.smtp_port, timeout=15)
+                server.starttls()
+                server.login(self.email, self.password)
+                server.send_message(msg)
+                server.quit()
+                logger.info(f"Dream job alert sent to {recipient}!")
+                break
+            except Exception as e:
+                logger.error(f"Failed to send dream job alert (attempt {attempt+1}/{max_retries}): {e}")
+                if attempt < max_retries - 1:
+                    logger.info("Retrying in 5 seconds...")
+                    time.sleep(5)
+                else:
+                    logger.error("Max retries reached. Dream job alert failed permanently.")
 
     def send_welcome_email(self, recipient: str):
         msg = MIMEMultipart()
