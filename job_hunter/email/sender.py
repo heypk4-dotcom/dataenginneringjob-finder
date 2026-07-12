@@ -125,13 +125,11 @@ class EmailSender:
                 msg.attach(part)
 
         import time
-        import ssl
         max_retries = 3
         for attempt in range(max_retries):
             try:
-                context = ssl.create_default_context()
                 server = smtplib.SMTP(self.smtp_server, self.smtp_port, timeout=60)
-                server.starttls(context=context)
+                server.starttls()
                 server.login(self.email, self.password)
                 server.send_message(msg)
                 server.quit()
@@ -212,13 +210,11 @@ class EmailSender:
         msg.attach(MIMEText(html_content, "html"))
 
         import time
-        import ssl
         max_retries = 3
         for attempt in range(max_retries):
             try:
-                context = ssl.create_default_context()
                 server = smtplib.SMTP(self.smtp_server, self.smtp_port, timeout=60)
-                server.starttls(context=context)
+                server.starttls()
                 server.login(self.email, self.password)
                 server.send_message(msg)
                 server.quit()

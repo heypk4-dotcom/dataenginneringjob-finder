@@ -186,9 +186,10 @@ class LLMProcessor:
                             genai.configure(api_key=self.api_keys[self.current_key_idx])
                             logger.warning(f"Rate limit (429) hit. Switched to API key {self.current_key_idx + 1}/{len(self.api_keys)}")
                         
-                        # Only sleep if we've cycled through all keys
-                        if attempt > 0 and attempt % len(self.api_keys) == 0:
-                            logger.warning(f"All keys rate limited for job {job.get('job_id')}. Sleeping 60s... (Attempt {attempt+1}/{max_retries})")
+                        # Only sleep if we've cycled through all keys or if using single external client
+                        num_keys = len(self.api_keys) if self.api_keys else 1
+                        if attempt > 0 and attempt % num_keys == 0:
+                            logger.warning(f"Rate limited for job {job.get('job_id')}. Sleeping 60s... (Attempt {attempt+1}/{max_retries})")
                             time.sleep(60)
                     else:
                         logger.error(f"Error processing job {job.get('job_id')}: {e}")
