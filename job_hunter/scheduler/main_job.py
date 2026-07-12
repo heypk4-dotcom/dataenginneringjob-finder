@@ -147,9 +147,9 @@ def run_job_hunter():
         else:
             logger.info("News report already sent for today.")
                 
-        # Jobs logic (7:00 PM IST / hour >= 13)
-        if now_utc.hour >= 13 and last_jobs_date != current_date:
-            logger.info("It's past 7:00 PM IST. Sending daily jobs batch report...")
+        # Jobs logic (10:00 AM IST / hour >= 4)
+        if now_utc.hour >= 4 and last_jobs_date != current_date:
+            logger.info("It's past 10:00 AM IST. Sending daily jobs batch report...")
             todays_jobs = db_manager.get_todays_jobs()
             if todays_jobs:
                 email_sender.send_report(todays_jobs)
@@ -158,7 +158,7 @@ def run_job_hunter():
             with open(last_jobs_file, "w") as f:
                 f.write(current_date)
         elif last_jobs_date != current_date:
-            logger.info(f"Skipping jobs report for now. It will be sent after 7:00 PM IST. (Current UTC hour: {now_utc.hour})")
+            logger.info(f"Skipping jobs report for now. It will be sent after 10:00 AM IST. (Current UTC hour: {now_utc.hour})")
         else:
             logger.info("Jobs report already sent for today.")
 
