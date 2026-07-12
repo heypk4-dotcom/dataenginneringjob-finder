@@ -123,7 +123,7 @@ def run_job_hunter():
             with open(last_news_file, "r") as f:
                 last_news_date = f.read().strip()
                 
-        # Check and send Jobs at 7:00 PM IST (now_utc.hour == 13)
+        # Check and send Jobs at 10:00 AM IST (now_utc.hour == 4)
         last_jobs_file = os.path.join(data_dir, "last_jobs_date.txt")
         last_jobs_date = ""
         if os.path.exists(last_jobs_file):
